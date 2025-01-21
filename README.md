@@ -21,7 +21,7 @@ A modern, full-stack e-commerce application built with cutting-edge technologies
 
 1. Clone this repository.  
    ```  
-   git clone https://github.com/your-username/your-repo-name.git  
+   git clone https://github.com/PrimeBeyonder/Full_Stack_NextJs_Ecommerce/
    cd your-repo-name  
     ```
 
