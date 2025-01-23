@@ -39,16 +39,3 @@ A modern, full-stack e-commerce application built with cutting-edge technologies
 
 5. Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.  
 
-## 🛠️ Contributing  
-
-Contributions are welcome! Feel free to open an issue or submit a pull request to improve the project.  
-
-## 📄 License  
-
-This project is licensed under the [MIT License](LICENSE).  
-
----
-
-### 🌟 Acknowledgments  
-
-Thanks to the developers and maintainers of the tools and libraries used in this project for enabling a seamless development process.  
