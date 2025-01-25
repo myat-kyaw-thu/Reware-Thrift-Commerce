@@ -1,3 +1,4 @@
+import createPost from "@/server/actions/create-post";
 import getPosts from "@/server/actions/get-post";
 
 type Post = {
@@ -25,6 +26,14 @@ export default async function Home() {
             </li>
           ))}
         </ul>
+      </div>
+      <div>
+        <h1 className="text-3xl font-bold mb-4">Create Post</h1>
+        <form action={createPost}>
+          <input type="text" name="title" placeholder="Title" />
+          <input type="text" name="content" placeholder="Content" />
+          <button type="submit">Create Post</button>
+        </form>
       </div>
     </div>
   );

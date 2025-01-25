@@ -13,6 +13,12 @@ export const queries = {
     posts: {
         findMany: async () => {
             return await db.select().from(schema.posts);
+        },
+        create: async (title: string, content: string) => {
+            return await db.insert(schema.posts).values({
+                title,
+                content
+            }).returning()
         }
     }
 };

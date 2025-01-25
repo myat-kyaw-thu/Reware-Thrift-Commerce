@@ -1,6 +1,6 @@
 "use server"
 
-import { db, queries } from "@/server"
+import { queries } from "@/server"
 
 export default async function getPosts() {
     try {
