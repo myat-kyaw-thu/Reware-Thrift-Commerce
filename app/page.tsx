@@ -1,3 +1,4 @@
+import PostBtn from "@/components/post-btn";
 import createPost from "@/server/actions/create-post";
 import getPosts from "@/server/actions/get-post";
 
@@ -32,7 +33,7 @@ export default async function Home() {
         <form action={createPost}>
           <input type="text" name="title" placeholder="Title" />
           <input type="text" name="content" placeholder="Content" />
-          <button type="submit">Create Post</button>
+          <PostBtn/>
         </form>
       </div>
     </div>
