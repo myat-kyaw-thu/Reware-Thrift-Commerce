@@ -8,6 +8,20 @@
       "when": 1737819303894,
       "tag": "0000_funny_callisto",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1737821077933,
+      "tag": "0001_silly_jazinda",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1737821455486,
+      "tag": "0002_secret_moonstone",
+      "breakpoints": true
     }
   ]
 }
