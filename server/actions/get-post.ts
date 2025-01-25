@@ -1,13 +1,18 @@
 "use server"
 
-import { db } from "@/server/index"
+import { db, queries } from "@/server"
 
-export default async function getPost() {
-    const posts = await db.query.posts.findMany();
+export default async function getPosts() {
+    try {
+        const allPosts = await queries.posts.findMany();
+        
+        if (!allPosts || allPosts.length === 0) {
+            return { error: "No posts found" }
+        }
 
-    if(!posts) {
-        return {error: "No posts found"}
+        return { success: allPosts }
+    } catch (error) {
+        console.error('Error fetching posts:', error);
+        return { error: "Failed to fetch posts" }
     }
-
-    return {success: posts}
 }
