@@ -1,6 +1,5 @@
 import { neon, neonConfig } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
-import * as schema from '@/server/schema';
 
 // Optional: Set custom fetch function for Neon
 neonConfig.fetchConnectionCache = true;
@@ -10,15 +9,5 @@ export const db = drizzle(sql);
 
 // Setup query builder with prepared statements
 export const queries = {
-    posts: {
-        findMany: async () => {
-            return await db.select().from(schema.posts);
-        },
-        create: async (title: string, content: string) => {
-            return await db.insert(schema.posts).values({
-                title,
-                content
-            }).returning()
-        }
-    }
+   //
 };
