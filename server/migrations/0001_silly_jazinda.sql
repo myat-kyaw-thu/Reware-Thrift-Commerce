@@ -1,1 +1,0 @@
-ALTER TABLE "poast" RENAME TO "post";
