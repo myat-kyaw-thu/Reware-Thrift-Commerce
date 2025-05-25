@@ -1,7 +1,7 @@
 "use client"
 
-import { Star } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Star } from "lucide-react"
 
 interface AnimatedRatingProps {
   value: number
@@ -11,7 +11,7 @@ interface AnimatedRatingProps {
   className?: string
 }
 
-const AnimatedRating = ({ value, maxRating = 5, size = "md", showValue = false, className }: AnimatedRatingProps) => {
+const Rating = ({ value, maxRating = 5, size = "md", showValue = false, className }: AnimatedRatingProps) => {
   const sizeClasses = {
     sm: "h-3 w-3",
     md: "h-4 w-4",
@@ -63,4 +63,4 @@ const AnimatedRating = ({ value, maxRating = 5, size = "md", showValue = false, 
   )
 }
 
-export default AnimatedRating
+export default Rating

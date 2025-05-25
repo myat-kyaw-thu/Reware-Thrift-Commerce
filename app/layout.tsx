@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 import { Inter } from "next/font/google";
 import "../assets/styles/globals.css";
+import { Toaster } from "../components/ui/toaster";
 import { APP_DESCRIPTION, APP_NAME } from "../lib/constants";
 
 const inter = Inter({
@@ -31,6 +32,7 @@ export default function RootLayout({
         disableTransitionOnChange
         >
           {children}
+        <Toaster/>
         </ThemeProvider>
       </body>
     </html>
