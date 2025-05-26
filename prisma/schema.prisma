@@ -46,6 +46,7 @@ model User {
   createdAt     DateTime  @default(now()) @db.Timestamp(6)
   updatedAt     DateTime  @updatedAt
   account       Account[]
+  session       Session[]
 }
 
 model Account {
@@ -67,4 +68,22 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @id
+  userId       String   @db.Uuid
+  expires      DateTime @db.Timestamp(6)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
 }
