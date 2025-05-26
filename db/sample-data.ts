@@ -1,4 +1,7 @@
 import { hashSync } from 'bcrypt-ts-edge';
+
+const now = new Date();
+
 const sampleData = {
   users: [
     {
@@ -31,6 +34,8 @@ const sampleData = {
       stock: 5,
       isFeatured: true,
       banner: 'banner-1.jpg',
+      createdAt: now,
+      updatedAt: now,
     },
     {
       name: 'Brooks Brothers Long Sleeved Shirt',
@@ -48,6 +53,8 @@ const sampleData = {
       stock: 10,
       isFeatured: true,
       banner: 'banner-2.jpg',
+      createdAt: now,
+      updatedAt: now,
     },
     {
       name: 'Tommy Hilfiger Classic Fit Dress Shirt',
@@ -65,6 +72,8 @@ const sampleData = {
       stock: 0,
       isFeatured: false,
       banner: null,
+      createdAt: now,
+      updatedAt: now,
     },
     {
       name: 'Calvin Klein Slim Fit Stretch Shirt',
@@ -82,6 +91,8 @@ const sampleData = {
       stock: 10,
       isFeatured: false,
       banner: null,
+      createdAt: now,
+      updatedAt: now,
     },
     {
       name: 'Polo Ralph Lauren Oxford Shirt',
@@ -99,6 +110,8 @@ const sampleData = {
       stock: 6,
       isFeatured: false,
       banner: null,
+      createdAt: now,
+      updatedAt: now,
     },
     {
       name: 'Polo Classic Pink Hoodie',
@@ -116,6 +129,8 @@ const sampleData = {
       stock: 8,
       isFeatured: true,
       banner: null,
+      createdAt: now,
+      updatedAt: now,
     },
   ],
 };
