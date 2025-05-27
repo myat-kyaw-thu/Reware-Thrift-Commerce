@@ -1,8 +1,20 @@
 "use server"
 
-import { signIn, signOut } from "../../auth"
-import { signInFormSchema } from "../validators"
+import { auth, signIn, signOut } from '@/auth';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
+import {
+  shippingAddressSchema,
+  signInFormSchema,
+  signUpFormSchema,
+  paymentMethodSchema,
+  updateUserSchema,
+} from '../validators';
+import { formatError } from '../utils';
+import { ShippingAddress } from '@/types';
+import { z } from 'zod';
+import { revalidatePath } from 'next/cache';
+import { hash } from '../encrypt';
+import { prisma } from '@/db/prisma';
 
 export async function signInWithCredentials(
   prevState: unknown,
@@ -23,4 +35,16 @@ export async function signInWithCredentials(
     }
     return { success: false, message: 'Invalid email or password' };
   }
+}
+
+export async function signOutUser() {
+  // get current users cart and delete it so it does not persist to next user
+  const currentCart = await getMyCart();
+
+  if (currentCart?.id) {
+    await prisma.cart.delete({ where: { id: currentCart.id } });
+  } else {
+    console.warn('No cart found for deletion.');
+  }
+  await signOut();
 }
