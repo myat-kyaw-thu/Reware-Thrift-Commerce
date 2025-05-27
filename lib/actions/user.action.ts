@@ -1,20 +1,16 @@
 "use server"
 
 import { auth, signIn, signOut } from '@/auth';
+import { prisma } from '@/db/prisma';
+import { ShippingAddress } from '@/types';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
+import { hash } from '../encrypt';
+import { formatError } from '../utils';
 import {
   shippingAddressSchema,
   signInFormSchema,
-  signUpFormSchema,
-  paymentMethodSchema,
-  updateUserSchema,
+  signUpFormSchema
 } from '../validators';
-import { formatError } from '../utils';
-import { ShippingAddress } from '@/types';
-import { z } from 'zod';
-import { revalidatePath } from 'next/cache';
-import { hash } from '../encrypt';
-import { prisma } from '@/db/prisma';
 
 export async function signInWithCredentials(
   prevState: unknown,
