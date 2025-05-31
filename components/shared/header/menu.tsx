@@ -3,7 +3,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { MenuIcon, ShoppingCart } from "lucide-react"
 import Link from "next/link"
 import ModeToggle from "./mode-toggle"
-// import UserButton from './user-button';
+import UserButton from "./user-button"
 
 const Menu = () => {
   return (
@@ -19,7 +19,7 @@ const Menu = () => {
         <div className="mx-1">
           <ModeToggle />
         </div>
-        {/* <UserButton /> */}
+        <UserButton />
       </nav>
 
       {/* Mobile Navigation */}
@@ -45,9 +45,9 @@ const Menu = () => {
               <div className="px-2">
                 <ModeToggle />
               </div>
-              {/* <div className="px-2">
+              <div className="px-2">
                 <UserButton />
-              </div> */}
+              </div>
             </div>
           </SheetContent>
         </Sheet>
