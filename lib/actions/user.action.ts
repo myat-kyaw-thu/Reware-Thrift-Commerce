@@ -35,13 +35,13 @@ export async function signInWithCredentials(
 
 export async function signOutUser() {
   // get current users cart and delete it so it does not persist to next user
-  const currentCart = await getMyCart();
+  // const currentCart = await getMyCart();
 
-  if (currentCart?.id) {
-    await prisma.cart.delete({ where: { id: currentCart.id } });
-  } else {
+  // if (currentCart?.id) {
+  //   await prisma.cart.delete({ where: { id: currentCart.id } });
+  // } else {
     console.warn('No cart found for deletion.');
-  }
+  // }
   await signOut();
 }
 export async function signUpUser(prevState: unknown, formData: FormData) {

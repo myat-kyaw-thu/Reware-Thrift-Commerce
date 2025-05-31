@@ -12,3 +12,5 @@ export const comparePassword = async (
 ): Promise<boolean> => {
   return await compare(plainPassword, hashedPassword);
 };
+
+export { hash };
