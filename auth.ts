@@ -5,8 +5,7 @@ import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { cookies } from 'next/headers';
 import { authConfig } from './auth.config';
-import { comparePassword } from './lib/encrypt';
-
+import { compare } from './lib/encrypt';
 
 export const config = {
   pages: {
@@ -25,54 +24,46 @@ export const config = {
         password: { type: 'password' },
       },
       async authorize(credentials) {
-        console.log('credentials:', credentials);
+        if (credentials == null) return null;
 
-        if (
-          !credentials ||
-          typeof credentials.email !== 'string' ||
-          typeof credentials.password !== 'string' ||
-          credentials.password.trim() === ''
-        ) {
-          console.log('Invalid credentials input');
-          return null;
-        }
-
+        // Find user in database
         const user = await prisma.user.findFirst({
-          where: { email: credentials.email },
+          where: {
+            email: credentials.email as string,
+          },
         });
 
-        if (!user || typeof user.password !== 'string') {
-          console.log('User not found or missing password');
-          return null;
+        // Check if user exists and if the password matches
+        if (user && user.password) {
+          const isMatch = await compare(
+            credentials.password as string,
+            user.password
+          );
+
+          // If password is correct, return user
+          if (isMatch) {
+            return {
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              role: user.role,
+            };
+          }
         }
-
-        const isMatch = await comparePassword(credentials.password, user.password);
-        console.log('Password match result:', isMatch);
-
-        if (!isMatch) {
-          console.log('Password does not match');
-          return null;
-        }
-
-        console.log('User authorized:', user.email);
-
-        return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-        };
-      }
-      ,
+        // If user does not exist or password does not match return null
+        return null;
+      },
     }),
   ],
   callbacks: {
     ...authConfig.callbacks,
     async session({ session, user, trigger, token }: any) {
+      // Set the user ID from the token
       session.user.id = token.sub;
       session.user.role = token.role;
       session.user.name = token.name;
 
+      // If there is an update, set the user name
       if (trigger === 'update') {
         session.user.name = user.name;
       }
@@ -80,13 +71,16 @@ export const config = {
       return session;
     },
     async jwt({ token, user, trigger, session }: any) {
+      // Assign user fields to token
       if (user) {
         token.id = user.id;
         token.role = user.role;
 
+        // If user has no name then use the email
         if (user.name === 'NO_NAME') {
-          token.name = user.email?.split('@')[0] ?? 'User';
+          token.name = user.email!.split('@')[0];
 
+          // Update database to reflect the token name
           await prisma.user.update({
             where: { id: user.id },
             data: { name: token.name },
@@ -103,10 +97,12 @@ export const config = {
             });
 
             if (sessionCart) {
+              // Delete current user cart
               await prisma.cart.deleteMany({
                 where: { userId: user.id },
               });
 
+              // Assign new cart
               await prisma.cart.update({
                 where: { id: sessionCart.id },
                 data: { userId: user.id },
@@ -116,6 +112,7 @@ export const config = {
         }
       }
 
+      // Handle session updates
       if (session?.user.name && trigger === 'update') {
         token.name = session.user.name;
       }
