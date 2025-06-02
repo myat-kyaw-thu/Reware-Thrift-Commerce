@@ -3,12 +3,14 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { notFound } from "next/navigation"
 import ProductImages from "../../../../components/shared/product/product-images"
-// import { getMyCart } from "@/lib/actions/cart.actions"
-// import { auth } from "@/auth"
+import { getMyCart } from "@/lib/actions/cart.actions"
 import { Separator } from "@/components/ui/separator"
 import { Package, Shield, Star, Truck, Users } from "lucide-react"
+import { auth } from "../../../../auth"
+import AddToCart from "../../../../components/shared/product/add-to-cart"
 import Rating from "../../../../components/shared/product/animated-rating"
 import { getProductBySlug } from "../../../../lib/actions/product.action"
+import ReviewList from "./review-list"
 
 const ProductDetailsPage = async (props: { params: Promise<{ slug: string }> }) => {
   const { slug } = await props.params
@@ -16,10 +18,10 @@ const ProductDetailsPage = async (props: { params: Promise<{ slug: string }> }) 
   const product = await getProductBySlug(slug)
   if (!product) notFound()
 
-  // const session = await auth()
-  // const userId = session?.user?.id
+  const session = await auth()
+  const userId = session?.user?.id
 
-  // const cart = await getMyCart()
+  const cart = await getMyCart()
 
   return (
     <div className="min-h-screen bg-background">
@@ -128,7 +130,7 @@ const ProductDetailsPage = async (props: { params: Promise<{ slug: string }> }) 
                   <Separator />
 
                   {/* Add to Cart Section - Uncomment when ready */}
-                  {/* {product.stock > 0 && (
+                  {product.stock > 0 && (
                     <div className="space-y-4">
                       <AddToCart
                         cart={cart}
@@ -148,7 +150,7 @@ const ProductDetailsPage = async (props: { params: Promise<{ slug: string }> }) 
                         </p>
                       </div>
                     </div>
-                  )} */}
+                  )}
 
                   {/* Trust Indicators */}
                   <div className="space-y-3">
@@ -178,7 +180,7 @@ const ProductDetailsPage = async (props: { params: Promise<{ slug: string }> }) 
       {/* Reviews Section */}
       <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4 max-w-7xl">
-          {/* <ReviewList userId={userId || ""} productId={product.id} productSlug={product.slug} /> */}
+          <ReviewList userId={userId || ""} productId={product.id} productSlug={product.slug} />
         </div>
       </section>
     </div>
