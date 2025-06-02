@@ -1,12 +1,12 @@
 "use client"
 
-import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Minus, Plus, ShoppingCart, Loader2, Check } from "lucide-react"
-import { cn } from "@/lib/utils"
 import { useToast } from "@/hooks/use-toast"
+import { cn } from "@/lib/utils"
+import { Check, Loader2, Minus, Plus, ShoppingCart } from "lucide-react"
+import { useState } from "react"
 
 interface AddToCartProps {
   cart: any
@@ -41,7 +41,7 @@ const AddToCart = ({ cart, item }: AddToCartProps) => {
       setIsAdded(true)
       toast({
         description: "Added to cart successfully!",
-        className: "bg-green-50 border-green-200 text-green-800",
+        variant: "default",
       })
 
       // Reset after animation
