@@ -60,31 +60,33 @@ const AddToCart = ({ cart, item }: AddToCartProps) => {
     <div className="space-y-6">
       {/* Quantity Selector */}
       <div className="space-y-3">
-        <Label className="text-sm font-medium">Quantity</Label>
-        <div className="flex items-center gap-3">
+        <Label className="text-sm font-medium text-muted-foreground">Quantity</Label>
+        <div className="flex items-center justify-center gap-4">
           <Button
             variant="outline"
             size="icon"
             onClick={() => handleQuantityChange(-1)}
             disabled={quantity <= 1}
-            className="h-10 w-10 rounded-full transition-all duration-200 hover:scale-110 disabled:hover:scale-100"
+            className="h-12 w-12 rounded-full border-2 hover:scale-110 transition-all duration-200 disabled:hover:scale-100"
           >
             <Minus className="h-4 w-4" />
           </Button>
 
-          <Input
-            type="number"
-            value={quantity}
-            onChange={(e) => setQuantity(Math.max(1, Number.parseInt(e.target.value) || 1))}
-            className="w-20 text-center font-medium transition-all duration-200 focus:scale-105"
-            min="1"
-          />
+          <div className="flex-1 max-w-20">
+            <Input
+              type="number"
+              value={quantity}
+              onChange={(e) => setQuantity(Math.max(1, Number.parseInt(e.target.value) || 1))}
+              className="text-center font-semibold text-lg h-12 border-2 rounded-xl"
+              min="1"
+            />
+          </div>
 
           <Button
             variant="outline"
             size="icon"
             onClick={() => handleQuantityChange(1)}
-            className="h-10 w-10 rounded-full transition-all duration-200 hover:scale-110"
+            className="h-12 w-12 rounded-full border-2 hover:scale-110 transition-all duration-200"
           >
             <Plus className="h-4 w-4" />
           </Button>
@@ -95,44 +97,33 @@ const AddToCart = ({ cart, item }: AddToCartProps) => {
       <Button
         onClick={handleAddToCart}
         disabled={isLoading || isAdded}
+        size="lg"
         className={cn(
-          "w-full h-12 text-base font-medium relative overflow-hidden group",
-          "bg-gradient-to-r from-primary to-primary/90",
-          "hover:from-primary/90 hover:to-primary",
-          "transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/25",
-          "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100",
-          isAdded && "bg-green-600 hover:bg-green-600",
+          "w-full h-14 text-lg font-semibold rounded-xl",
+          "bg-gradient-to-r from-primary via-primary to-primary/90",
+          "hover:from-primary/90 hover:via-primary hover:to-primary",
+          "transform transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/25",
+          "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none",
+          isAdded && "bg-gradient-to-r from-green-600 to-green-500 hover:from-green-600 hover:to-green-500",
         )}
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
         {isLoading ? (
-          <>
-            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+          <div className="flex items-center">
+            <Loader2 className="mr-3 h-5 w-5 animate-spin" />
             Adding to Cart...
-          </>
+          </div>
         ) : isAdded ? (
-          <>
-            <Check className="mr-2 h-5 w-5 animate-in zoom-in duration-300" />
+          <div className="flex items-center">
+            <Check className="mr-3 h-5 w-5 animate-in zoom-in duration-300" />
             Added to Cart!
-          </>
+          </div>
         ) : (
-          <>
-            <ShoppingCart className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform duration-200" />
-            Add to Cart
-          </>
+          <div className="flex items-center">
+            <ShoppingCart className="mr-3 h-5 w-5" />
+            Add to Cart • ${(item.price * quantity).toFixed(2)}
+          </div>
         )}
       </Button>
-
-      {/* Quick Actions */}
-      <div className="grid grid-cols-2 gap-3">
-        <Button variant="outline" className="transition-all duration-200 hover:scale-105 hover:shadow-md">
-          Add to Wishlist
-        </Button>
-        <Button variant="outline" className="transition-all duration-200 hover:scale-105 hover:shadow-md">
-          Compare
-        </Button>
-      </div>
     </div>
   )
 }
