@@ -7,6 +7,8 @@ import { useToast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
 import { Check, Loader2, Minus, Plus, ShoppingCart } from "lucide-react"
 import { useState } from "react"
+import { addItemToCart } from "@/lib/actions/cart.actions"
+
 
 interface AddToCartProps {
   cart: any
@@ -35,8 +37,15 @@ const AddToCart = ({ cart, item }: AddToCartProps) => {
     setIsLoading(true)
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      // Call the real addItemToCart function
+      await addItemToCart({
+        productId: item.productId,
+        name: item.name,
+        slug: item.slug,
+        price: String(item.price),
+        qty: quantity,
+        image: item.image,
+      })
 
       setIsAdded(true)
       toast({
