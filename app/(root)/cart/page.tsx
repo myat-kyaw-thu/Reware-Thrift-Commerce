@@ -51,9 +51,14 @@ export default async function CartPage() {
                 </div>
               </div>
 
-              <button className="w-full mt-6 bg-foreground text-background hover:opacity-90 py-2 rounded-md transition-opacity">
-                Proceed to Checkout
-              </button>
+              <form action="/shipping-address" method="get" className="w-full mt-6">
+                <button
+                  type="submit"
+                  className="w-full bg-foreground text-background hover:opacity-90 py-2 rounded-md transition-opacity"
+                >
+                  Proceed to Checkout
+                </button>
+              </form>
             </CardContent>
           </Card>
         </div>
