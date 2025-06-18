@@ -54,8 +54,6 @@ export const config = {
           return null;
         }
 
-        console.log('User authorized:', user.email);
-
         return {
           id: user.id,
           name: user.name,
