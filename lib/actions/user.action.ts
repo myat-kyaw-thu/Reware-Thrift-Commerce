@@ -1,12 +1,14 @@
-"use server"
+"use server";
 
 import { auth, signIn, signOut } from '@/auth';
 import { prisma } from '@/db/prisma';
 import { ShippingAddress } from '@/types';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
+import { z } from 'zod';
 import { hash } from '../encrypt';
 import { formatError } from '../utils';
 import {
+  paymentMethodSchema,
   shippingAddressSchema,
   signInFormSchema,
   signUpFormSchema
@@ -40,7 +42,7 @@ export async function signOutUser() {
   // if (currentCart?.id) {
   //   await prisma.cart.delete({ where: { id: currentCart.id } });
   // } else {
-    console.warn('No cart found for deletion.');
+  console.warn('No cart found for deletion.');
   // }
   await signOut();
 }
@@ -108,6 +110,30 @@ export async function updateUserAddress(data: ShippingAddress) {
     return {
       success: true,
       message: 'User updated successfully',
+    };
+  } catch (error) {
+    return { success: false, message: formatError(error) };
+  }
+}
+
+export async function updateUserPaymentMethod(data: z.infer<typeof paymentMethodSchema>) {
+  try {
+    const session = await auth();
+    const currentUser = await prisma.user.findFirst({
+      where: { id: session?.user?.id },
+    });
+
+    if (!currentUser) throw new Error('User not found');
+
+    const paymentMethod = paymentMethodSchema.parse(data);
+
+    await prisma.user.update({
+      where: { id: currentUser.id },
+      data: { paymentMethod: paymentMethod.type }
+    });
+    return {
+      success: true,
+      message: 'Payment method updated successfully',
     };
   } catch (error) {
     return { success: false, message: formatError(error) };
