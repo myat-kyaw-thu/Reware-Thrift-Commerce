@@ -25,8 +25,7 @@ export const config = {
         password: { type: 'password' },
       },
       async authorize(credentials) {
-        console.log('credentials:', credentials);
-
+        
         if (
           !credentials ||
           typeof credentials.email !== 'string' ||
@@ -37,15 +36,18 @@ export const config = {
           return null;
         }
 
+        // Find the User by Email
         const user = await prisma.user.findFirst({
           where: { email: credentials.email },
         });
 
+        // throw an error if user is not found or password is not a string
         if (!user || typeof user.password !== 'string') {
           console.log('User not found or missing password');
           return null;
         }
 
+        // Compare the provided password with the stored password
         const isMatch = await comparePassword(credentials.password, user.password);
         console.log('Password match result:', isMatch);
 
