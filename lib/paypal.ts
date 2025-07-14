@@ -1,6 +1,32 @@
 const base = process.env.PAYPAL_API_URL || 'https://api-m.sandbox.paypal.com';
 
+export const paypal = {
+  createOrder: async function createOrder(price: number) {
+    const accessToken = await generateAccessToken();
+    const url = `${base}/v2/checkout/orders`;
 
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({
+        intent: 'CAPTURE',
+        purchase_units: [
+          {
+            amount: {
+              currency_code: 'USD',
+              value: price,
+            },
+          },
+        ],
+      }),
+    });
+
+    return handleResponse(response);
+  },
+};
 async function generateAccessToken() {
   const { PAYPAL_CLIENT_ID, PAYPAL_APP_SECRET } = process.env;
   const auth = Buffer.from(`${PAYPAL_CLIENT_ID}:${PAYPAL_APP_SECRET}`).toString(
