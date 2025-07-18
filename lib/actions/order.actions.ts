@@ -4,6 +4,7 @@ import { auth } from '@/auth';
 import { prisma } from '@/db/prisma';
 import { CartItem, PaymentResult } from '@/types';
 import { Prisma } from '@prisma/client';
+import { revalidatePath } from 'next/cache';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import { PAGE_SIZE } from '../constants';
 import { paypal } from '../paypal';
@@ -11,7 +12,6 @@ import { convertToPlainObject, formatError } from '../utils';
 import { insertOrderSchema } from '../validators';
 import { getMyCart } from './cart.actions';
 import { getUserById } from './user.action';
-import { revalidatePath } from 'next/cache';
 
 
 
@@ -322,6 +322,19 @@ export async function deleteOrder(id: string) {
       success: true,
       message: 'Order deleted successfully',
     };
+  } catch (error) {
+    return { success: false, message: formatError(error) };
+  }
+}
+
+// Update COD order to paid
+export async function updateOrderToPaidCOD(orderId: string) {
+  try {
+    await updateOrderToPaid({ orderId });
+
+    revalidatePath(`/order/${orderId}`);
+
+    return { success: true, message: 'Order marked as paid' };
   } catch (error) {
     return { success: false, message: formatError(error) };
   }
