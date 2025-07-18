@@ -2,7 +2,8 @@
 
 import { auth } from '@/auth';
 import { prisma } from '@/db/prisma';
-import { CartItem, PaymentResult } from '@/types';
+import { sendPurchaseReceipt } from '@/email';
+import { CartItem, PaymentResult, ShippingAddress } from '@/types';
 import { Prisma } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
@@ -13,9 +14,7 @@ import { insertOrderSchema } from '../validators';
 import { getMyCart } from './cart.actions';
 import { getUserById } from './user.action';
 
-
-
-
+// Create order and create the order items
 export async function createOrder() {
   try {
     const session = await auth();
@@ -104,6 +103,7 @@ export async function createOrder() {
   }
 }
 
+// Get order by id
 export async function getOrderById(orderId: string) {
   const data = await prisma.order.findFirst({
     where: {
@@ -118,6 +118,7 @@ export async function getOrderById(orderId: string) {
   return convertToPlainObject(data);
 }
 
+// Create new paypal order
 export async function createPayPalOrder(orderId: string) {
   try {
     // Get order from database
@@ -152,6 +153,54 @@ export async function createPayPalOrder(orderId: string) {
     } else {
       throw new Error('Order not found');
     }
+  } catch (error) {
+    return { success: false, message: formatError(error) };
+  }
+}
+
+// Approve paypal order and update order to paid
+export async function approvePayPalOrder(
+  orderId: string,
+  data: { orderID: string; }
+) {
+  try {
+    // Get order from database
+    const order = await prisma.order.findFirst({
+      where: {
+        id: orderId,
+      },
+    });
+
+    if (!order) throw new Error('Order not found');
+
+    const captureData = await paypal.capturePayment(data.orderID);
+
+    if (
+      !captureData ||
+      captureData.id !== (order.paymentResult as PaymentResult)?.id ||
+      captureData.status !== 'COMPLETED'
+    ) {
+      throw new Error('Error in PayPal payment');
+    }
+
+    // Update order to paid
+    await updateOrderToPaid({
+      orderId,
+      paymentResult: {
+        id: captureData.id,
+        status: captureData.status,
+        email_address: captureData.payer.email_address,
+        pricePaid:
+          captureData.purchase_units[0]?.payments?.captures[0]?.amount?.value,
+      },
+    });
+
+    revalidatePath(`/order/${orderId}`);
+
+    return {
+      success: true,
+      message: 'Your order has been paid',
+    };
   } catch (error) {
     return { success: false, message: formatError(error) };
   }
@@ -199,8 +248,28 @@ export async function updateOrderToPaid({
       },
     });
   });
+
+  // Get updated order after transaction
+  const updatedOrder = await prisma.order.findFirst({
+    where: { id: orderId },
+    include: {
+      orderitems: true,
+      user: { select: { name: true, email: true } },
+    },
+  });
+
+  if (!updatedOrder) throw new Error('Order not found');
+
+  sendPurchaseReceipt({
+    order: {
+      ...updatedOrder,
+      shippingAddress: updatedOrder.shippingAddress as ShippingAddress,
+      paymentResult: updatedOrder.paymentResult as PaymentResult,
+    },
+  });
 }
 
+// Get user's orders
 export async function getMyOrders({
   limit = PAGE_SIZE,
   page,
@@ -233,6 +302,7 @@ type SalesDataType = {
   totalSales: number;
 }[];
 
+// Get sales data and order summary
 export async function getOrderSummary() {
   // Get counts for each resource
   const ordersCount = await prisma.order.count();
@@ -273,6 +343,7 @@ export async function getOrderSummary() {
   };
 }
 
+// Get all orders
 export async function getAllOrders({
   limit = PAGE_SIZE,
   page,
@@ -312,6 +383,7 @@ export async function getAllOrders({
   };
 }
 
+// Delete an order
 export async function deleteOrder(id: string) {
   try {
     await prisma.order.delete({ where: { id } });
@@ -340,6 +412,7 @@ export async function updateOrderToPaidCOD(orderId: string) {
   }
 }
 
+// Update COD order to delivered
 export async function deliverOrder(orderId: string) {
   try {
     const order = await prisma.order.findFirst({
