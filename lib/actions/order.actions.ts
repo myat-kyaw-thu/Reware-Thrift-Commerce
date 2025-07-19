@@ -263,8 +263,16 @@ export async function updateOrderToPaid({
   sendPurchaseReceipt({
     order: {
       ...updatedOrder,
+      itemsPrice: updatedOrder.itemsPrice.toString(),
+      shippingPrice: updatedOrder.shippingPrice.toString(),
+      taxPrice: updatedOrder.taxPrice.toString(),
+      totalPrice: updatedOrder.totalPrice.toString(),
       shippingAddress: updatedOrder.shippingAddress as ShippingAddress,
       paymentResult: updatedOrder.paymentResult as PaymentResult,
+      orderitems: updatedOrder.orderitems.map(item => ({
+        ...item,
+        price: item.price.toString(),
+      })),
     },
   });
 }
