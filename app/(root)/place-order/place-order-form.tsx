@@ -1,49 +1,63 @@
 "use client";
 
-import type React from "react";
-
 import { Button } from "@/components/ui/button";
 import { createOrder } from "@/lib/actions/order.actions";
-import { Check, Loader } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 import { useRouter } from "next/navigation";
+import type React from "react";
+import { useState } from "react";
 import { useFormStatus } from "react-dom";
 
 const PlaceOrderForm = () => {
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    const res = await createOrder();
-    if (res.redirectTo) {
-      router.push(res.redirectTo);
+    setIsSubmitting(true);
+
+    try {
+      const res = await createOrder();
+      if (res.redirectTo) {
+        router.push(res.redirectTo);
+      }
+    } catch (error) {
+      console.error("Order creation failed:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const PlaceOrderButton = () => {
     const { pending } = useFormStatus();
+    const isLoading = pending || isSubmitting;
+
     return (
       <Button
-        disabled={pending}
-        className="w-full h-12 text-base font-semibold bg-slate-900 text-white disabled:bg-slate-400 disabled:cursor-not-allowed transition-colors duration-200"
+        disabled={isLoading}
+        className="w-full h-12 text-base font-medium bg-primary text-primary-foreground transition-colors duration-200 disabled:opacity-50"
       >
-        {pending ? (
-          <>
-            <Loader className="w-5 h-5 animate-spin mr-2" />
-            Processing...
-          </>
+        {isLoading ? (
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
+            Processing Order...
+          </div>
         ) : (
-          <>
-            <Check className="w-5 h-5 mr-2" />
+          <div className="flex items-center gap-2">
+            <ShoppingBag className="w-4 h-4" />
             Place Order
-          </>
+          </div>
         )}
       </Button>
     );
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full">
+    <form onSubmit={handleSubmit} className="w-full space-y-4">
       <PlaceOrderButton />
+      <div className="text-center">
+        <p className="text-xs text-muted-foreground">By placing this order, you agree to our terms and conditions</p>
+      </div>
     </form>
   );
 };
