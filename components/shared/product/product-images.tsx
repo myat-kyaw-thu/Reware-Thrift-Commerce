@@ -1,49 +1,50 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Image from "next/image"
-import { cn } from "@/lib/utils"
-import { ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react'
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
+import { ChevronLeft, ChevronRight, Expand } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
 
 interface ProductImagesProps {
-  images: string[]
+  images: string[];
+  productName?: string;
 }
 
-const ProductImages = ({ images }: ProductImagesProps) => {
-  const [currentImage, setCurrentImage] = useState(0)
-  const [isZoomed, setIsZoomed] = useState(false)
+const ProductImages = ({ images, productName = "Product" }: ProductImagesProps) => {
+  const [currentImage, setCurrentImage] = useState(0);
+  const [isZoomed, setIsZoomed] = useState(false);
 
   const nextImage = () => {
-    setCurrentImage((prev) => (prev + 1) % images.length)
-  }
+    setCurrentImage((prev) => (prev + 1) % images.length);
+  };
 
   const prevImage = () => {
-    setCurrentImage((prev) => (prev - 1 + images.length) % images.length)
-  }
+    setCurrentImage((prev) => (prev - 1 + images.length) % images.length);
+  };
 
   return (
     <div className="space-y-4">
       {/* Main Image */}
-      <div className="relative group overflow-hidden rounded-2xl bg-gradient-to-br from-muted/30 to-muted/10">
-        <div className="aspect-square relative">
+      <div className="relative group">
+        <div className="aspect-square relative overflow-hidden rounded-lg bg-muted border">
           <Image
             src={images[currentImage] || "/placeholder.svg?height=600&width=600"}
-            alt="Product image"
+            alt={`${productName} - Image ${currentImage + 1}`}
             fill
-            className="object-cover transition-all duration-700 group-hover:scale-105"
+            className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
             priority
           />
 
-          {/* Zoom Button */}
+          {/* Expand Button */}
           <Button
             variant="secondary"
             size="icon"
-            className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 bg-white/90 backdrop-blur-sm"
+            className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-card/90 backdrop-blur-sm hover:bg-card"
             onClick={() => setIsZoomed(true)}
           >
-            <ZoomIn className="h-4 w-4" />
+            <Expand className="h-4 w-4" />
           </Button>
 
           {/* Navigation Arrows */}
@@ -52,7 +53,7 @@ const ProductImages = ({ images }: ProductImagesProps) => {
               <Button
                 variant="secondary"
                 size="icon"
-                className="absolute left-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 bg-white/90 backdrop-blur-sm"
+                className="absolute left-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-card/90 backdrop-blur-sm hover:bg-card"
                 onClick={prevImage}
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -60,7 +61,7 @@ const ProductImages = ({ images }: ProductImagesProps) => {
               <Button
                 variant="secondary"
                 size="icon"
-                className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 bg-white/90 backdrop-blur-sm"
+                className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-card/90 backdrop-blur-sm hover:bg-card"
                 onClick={nextImage}
               >
                 <ChevronRight className="h-4 w-4" />
@@ -70,7 +71,7 @@ const ProductImages = ({ images }: ProductImagesProps) => {
 
           {/* Image Counter */}
           {images.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm backdrop-blur-sm">
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-graphite-900/80 text-graphite-50 px-3 py-1 rounded-full text-sm backdrop-blur-sm">
               {currentImage + 1} / {images.length}
             </div>
           )}
@@ -79,22 +80,19 @@ const ProductImages = ({ images }: ProductImagesProps) => {
 
       {/* Thumbnail Grid */}
       {images.length > 1 && (
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-4 gap-2 sm:gap-3">
           {images.map((image, index) => (
             <button
               key={index}
               onClick={() => setCurrentImage(index)}
               className={cn(
-                "relative aspect-square rounded-lg overflow-hidden transition-all duration-300",
-                "hover:scale-105 hover:shadow-lg",
-                currentImage === index
-                  ? "ring-2 ring-primary ring-offset-2 scale-105"
-                  : "opacity-70 hover:opacity-100"
+                "relative aspect-square rounded-md overflow-hidden transition-all duration-200 border-2",
+                currentImage === index ? "border-primary" : "border-border hover:border-muted-foreground",
               )}
             >
               <Image
                 src={image || "/placeholder.svg?height=150&width=150"}
-                alt={`Product image ${index + 1}`}
+                alt={`${productName} - Thumbnail ${index + 1}`}
                 fill
                 className="object-cover"
               />
@@ -105,11 +103,11 @@ const ProductImages = ({ images }: ProductImagesProps) => {
 
       {/* Zoom Modal */}
       <Dialog open={isZoomed} onOpenChange={setIsZoomed}>
-        <DialogContent className="max-w-4xl p-0 overflow-hidden">
+        <DialogContent className="max-w-4xl p-2 bg-card">
           <div className="relative aspect-square">
             <Image
               src={images[currentImage] || "/placeholder.svg?height=800&width=800"}
-              alt="Product image zoomed"
+              alt={`${productName} - Zoomed view`}
               fill
               className="object-contain"
             />
@@ -117,7 +115,7 @@ const ProductImages = ({ images }: ProductImagesProps) => {
         </DialogContent>
       </Dialog>
     </div>
-  )
-}
+  );
+};
 
-export default ProductImages
+export default ProductImages;
