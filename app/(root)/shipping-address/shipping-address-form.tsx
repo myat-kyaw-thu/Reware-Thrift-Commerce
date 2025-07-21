@@ -7,13 +7,14 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { updateUserAddress } from '@/lib/actions/user.action';
+import { updateUserAddress } from "@/lib/actions/user.action";
 import { shippingAddressDefaultValues } from "@/lib/constants";
 import { shippingAddressSchema } from "@/lib/validators";
 import type { ShippingAddress } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircle, ArrowRight, Check, Loader, MapPin, Save } from "lucide-react";
+import { AlertCircle, ArrowRight, Check, MapPin, Save, Shield, Truck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
@@ -50,6 +51,7 @@ const ShippingAddressForm = ({ address }: { address: ShippingAddress; }) => {
     watch,
     formState: { errors, isValid, dirtyFields },
   } = form;
+
   const watchedFields = watch();
 
   // Calculate form completion progress
@@ -92,7 +94,6 @@ const ShippingAddressForm = ({ address }: { address: ShippingAddress; }) => {
     startTransition(async () => {
       try {
         const res = await updateUserAddress(values);
-
         if (!res.success) {
           toast({
             variant: "destructive",
@@ -101,12 +102,10 @@ const ShippingAddressForm = ({ address }: { address: ShippingAddress; }) => {
           });
           return;
         }
-
         toast({
           title: "Address updated successfully",
           description: "Redirecting to payment method...",
         });
-
         setTimeout(() => {
           router.push("/payment-method");
         }, 1000);
@@ -133,45 +132,57 @@ const ShippingAddressForm = ({ address }: { address: ShippingAddress; }) => {
   };
 
   return (
-    <div className="min-h-screen  p-4 sm:p-6 lg:p-8">
-      <div className="mx-auto max-w-2xl">
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-8 max-w-2xl">
         {/* Header Section */}
-        <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
-            <MapPin className="h-6 w-6 text-blue-600" />
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center">
+              <MapPin className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <div>
+              <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Shipping Address</h1>
+              <p className="text-muted-foreground">Where should we deliver your order?</p>
+            </div>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Shipping Address</h1>
-          <p className="mt-2 text-lg text-gray-600">Where should we deliver your order?</p>
         </div>
 
         {/* Progress Section */}
-        <Card className="mb-6">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-700">Form Completion</span>
-              <span className="text-sm text-gray-500">{Math.round(formProgress)}%</span>
+        <Card className="mb-6 border bg-card">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm font-medium text-card-foreground">Form Progress</span>
+              <span className="text-sm text-muted-foreground">{Math.round(formProgress)}%</span>
             </div>
-            <Progress value={formProgress} className="h-2" />
-            <div className="mt-2 flex items-center gap-2">
-              {isAutoSaving && (
-                <div className="flex items-center gap-1 text-xs text-blue-600">
-                  <Save className="h-3 w-3 animate-pulse" />
-                  Auto-saving...
+            <Progress value={formProgress} className="h-2 bg-muted" />
+            <div className="mt-3 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                {isAutoSaving && (
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Save className="h-3 w-3" />
+                    Auto-saving...
+                  </div>
+                )}
+                {hasUnsavedChanges && !isAutoSaving && (
+                  <Badge variant="outline" className="text-xs bg-muted/50 text-muted-foreground border-border">
+                    Unsaved changes
+                  </Badge>
+                )}
+              </div>
+              {isValid && formProgress === 100 && (
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <Check className="h-3 w-3" />
+                  Ready to continue
                 </div>
-              )}
-              {hasUnsavedChanges && !isAutoSaving && (
-                <Badge variant="outline" className="text-xs">
-                  Unsaved changes
-                </Badge>
               )}
             </div>
           </CardContent>
         </Card>
 
         {/* Main Form */}
-        <Card className="shadow-xl">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+        <Card className="border bg-card">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2 text-card-foreground">
               <MapPin className="h-5 w-5" />
               Delivery Information
             </CardTitle>
@@ -185,28 +196,28 @@ const ShippingAddressForm = ({ address }: { address: ShippingAddress; }) => {
                   name="fullName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="flex items-center gap-2">
+                      <FormLabel className="flex items-center gap-2 text-card-foreground">
                         Full Name
-                        {isFieldValid("fullName") && <Check className="h-4 w-4 text-green-500" />}
+                        {isFieldValid("fullName") && <Check className="h-4 w-4 text-muted-foreground" />}
                       </FormLabel>
                       <FormControl>
                         <div className="relative">
                           <Input
                             placeholder="Enter your full name"
-                            className={`transition-all duration-200 ${getFieldError("fullName")
-                              ? "border-red-300 focus:border-red-500 focus:ring-red-500"
+                            className={`bg-background border-border text-foreground transition-colors duration-200 ${getFieldError("fullName")
+                              ? "border-destructive focus:border-destructive"
                               : isFieldValid("fullName")
-                                ? "border-green-300 focus:border-green-500 focus:ring-green-500"
-                                : "focus:border-blue-500 focus:ring-blue-500"
+                                ? "border-muted-foreground"
+                                : "focus:border-primary"
                               }`}
                             {...field}
                           />
                           {getFieldError("fullName") && (
-                            <AlertCircle className="absolute right-3 top-3 h-4 w-4 text-red-500" />
+                            <AlertCircle className="absolute right-3 top-3 h-4 w-4 text-destructive" />
                           )}
                         </div>
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-destructive" />
                     </FormItem>
                   )}
                 />
@@ -217,28 +228,28 @@ const ShippingAddressForm = ({ address }: { address: ShippingAddress; }) => {
                   name="streetAddress"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="flex items-center gap-2">
+                      <FormLabel className="flex items-center gap-2 text-card-foreground">
                         Street Address
-                        {isFieldValid("streetAddress") && <Check className="h-4 w-4 text-green-500" />}
+                        {isFieldValid("streetAddress") && <Check className="h-4 w-4 text-muted-foreground" />}
                       </FormLabel>
                       <FormControl>
                         <div className="relative">
                           <Input
                             placeholder="Enter your street address"
-                            className={`transition-all duration-200 ${getFieldError("streetAddress")
-                              ? "border-red-300 focus:border-red-500 focus:ring-red-500"
+                            className={`bg-background border-border text-foreground transition-colors duration-200 ${getFieldError("streetAddress")
+                              ? "border-destructive focus:border-destructive"
                               : isFieldValid("streetAddress")
-                                ? "border-green-300 focus:border-green-500 focus:ring-green-500"
-                                : "focus:border-blue-500 focus:ring-blue-500"
+                                ? "border-muted-foreground"
+                                : "focus:border-primary"
                               }`}
                             {...field}
                           />
                           {getFieldError("streetAddress") && (
-                            <AlertCircle className="absolute right-3 top-3 h-4 w-4 text-red-500" />
+                            <AlertCircle className="absolute right-3 top-3 h-4 w-4 text-destructive" />
                           )}
                         </div>
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-destructive" />
                     </FormItem>
                   )}
                 />
@@ -250,59 +261,58 @@ const ShippingAddressForm = ({ address }: { address: ShippingAddress; }) => {
                     name="city"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex items-center gap-2">
+                        <FormLabel className="flex items-center gap-2 text-card-foreground">
                           City
-                          {isFieldValid("city") && <Check className="h-4 w-4 text-green-500" />}
+                          {isFieldValid("city") && <Check className="h-4 w-4 text-muted-foreground" />}
                         </FormLabel>
                         <FormControl>
                           <div className="relative">
                             <Input
                               placeholder="Enter city"
-                              className={`transition-all duration-200 ${getFieldError("city")
-                                ? "border-red-300 focus:border-red-500 focus:ring-red-500"
+                              className={`bg-background border-border text-foreground transition-colors duration-200 ${getFieldError("city")
+                                ? "border-destructive focus:border-destructive"
                                 : isFieldValid("city")
-                                  ? "border-green-300 focus:border-green-500 focus:ring-green-500"
-                                  : "focus:border-blue-500 focus:ring-blue-500"
+                                  ? "border-muted-foreground"
+                                  : "focus:border-primary"
                                 }`}
                               {...field}
                             />
                             {getFieldError("city") && (
-                              <AlertCircle className="absolute right-3 top-3 h-4 w-4 text-red-500" />
+                              <AlertCircle className="absolute right-3 top-3 h-4 w-4 text-destructive" />
                             )}
                           </div>
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-destructive" />
                       </FormItem>
                     )}
                   />
-
                   <FormField
                     control={form.control}
                     name="postalCode"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex items-center gap-2">
+                        <FormLabel className="flex items-center gap-2 text-card-foreground">
                           Postal Code
-                          {isFieldValid("postalCode") && <Check className="h-4 w-4 text-green-500" />}
+                          {isFieldValid("postalCode") && <Check className="h-4 w-4 text-muted-foreground" />}
                         </FormLabel>
                         <FormControl>
                           <div className="relative">
                             <Input
                               placeholder="Enter postal code"
-                              className={`transition-all duration-200 ${getFieldError("postalCode")
-                                ? "border-red-300 focus:border-red-500 focus:ring-red-500"
+                              className={`bg-background border-border text-foreground transition-colors duration-200 ${getFieldError("postalCode")
+                                ? "border-destructive focus:border-destructive"
                                 : isFieldValid("postalCode")
-                                  ? "border-green-300 focus:border-green-500 focus:ring-green-500"
-                                  : "focus:border-blue-500 focus:ring-blue-500"
+                                  ? "border-muted-foreground"
+                                  : "focus:border-primary"
                                 }`}
                               {...field}
                             />
                             {getFieldError("postalCode") && (
-                              <AlertCircle className="absolute right-3 top-3 h-4 w-4 text-red-500" />
+                              <AlertCircle className="absolute right-3 top-3 h-4 w-4 text-destructive" />
                             )}
                           </div>
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-destructive" />
                       </FormItem>
                     )}
                   />
@@ -314,80 +324,106 @@ const ShippingAddressForm = ({ address }: { address: ShippingAddress; }) => {
                   name="country"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="flex items-center gap-2">
+                      <FormLabel className="flex items-center gap-2 text-card-foreground">
                         Country
-                        {isFieldValid("country") && <Check className="h-4 w-4 text-green-500" />}
+                        {isFieldValid("country") && <Check className="h-4 w-4 text-muted-foreground" />}
                       </FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger
-                            className={`transition-all duration-200 ${getFieldError("country")
-                              ? "border-red-300 focus:border-red-500 focus:ring-red-500"
+                            className={`bg-background border-border text-foreground transition-colors duration-200 ${getFieldError("country")
+                              ? "border-destructive focus:border-destructive"
                               : isFieldValid("country")
-                                ? "border-green-300 focus:border-green-500 focus:ring-green-500"
-                                : "focus:border-blue-500 focus:ring-blue-500"
+                                ? "border-muted-foreground"
+                                : "focus:border-primary"
                               }`}
                           >
                             <SelectValue placeholder="Select your country" />
                           </SelectTrigger>
                         </FormControl>
-                        <SelectContent>
+                        <SelectContent className="bg-card border-border">
                           {countries.map((country) => (
-                            <SelectItem key={country.code} value={country.name}>
+                            <SelectItem key={country.code} value={country.name} className="text-card-foreground">
                               {country.name}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
-                      <FormMessage />
+                      <FormMessage className="text-destructive" />
                     </FormItem>
                   )}
                 />
 
-                {/* Submit Button */}
-                <div className="pt-6">
-                  <Button
-                    type="submit"
-                    disabled={isPending || !isValid}
-                    className="w-full h-12 text-base font-semibold transition-all duration-200 hover:scale-[1.02] disabled:scale-100"
-                  >
-                    {isPending ? (
-                      <div className="flex items-center gap-2">
-                        <Loader className="h-4 w-4 animate-spin" />
-                        Processing...
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        Continue to Payment
-                        <ArrowRight className="h-4 w-4" />
-                      </div>
-                    )}
-                  </Button>
-                </div>
+                <Separator className="my-6" />
 
                 {/* Form Status */}
-                <div className="text-center text-sm text-gray-500">
+                <div className="bg-muted/30 rounded-lg p-4">
                   {!isValid && formProgress > 0 && (
-                    <p className="flex items-center justify-center gap-1 text-amber-600">
+                    <div className="flex items-center gap-2 text-muted-foreground">
                       <AlertCircle className="h-4 w-4" />
-                      Please complete all required fields
-                    </p>
+                      <span className="text-sm">Please complete all required fields to continue</span>
+                    </div>
                   )}
                   {isValid && (
-                    <p className="flex items-center justify-center gap-1 text-green-600">
+                    <div className="flex items-center gap-2 text-muted-foreground">
                       <Check className="h-4 w-4" />
-                      All fields completed correctly
-                    </p>
+                      <span className="text-sm">All information completed correctly</span>
+                    </div>
                   )}
                 </div>
+
+                {/* Submit Button */}
+                <Button
+                  type="submit"
+                  disabled={isPending || !isValid}
+                  className="w-full h-12 text-base font-medium bg-primary text-primary-foreground transition-colors duration-200 disabled:opacity-50"
+                >
+                  {isPending ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
+                      Processing...
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      Continue to Payment
+                      <ArrowRight className="h-4 w-4" />
+                    </div>
+                  )}
+                </Button>
               </form>
             </Form>
           </CardContent>
         </Card>
 
-        {/* Security Notice */}
-        <div className="mt-6 text-center text-xs text-gray-500">
-          <p>🔒 Your information is encrypted and secure</p>
+        {/* Security & Trust Indicators */}
+        <div className="mt-6 space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="flex items-center gap-3 p-4 bg-muted/30 rounded-lg border">
+              <Shield className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-foreground">Secure</p>
+                <p className="text-xs text-muted-foreground">SSL encrypted</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 p-4 bg-muted/30 rounded-lg border">
+              <Truck className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-foreground">Fast Delivery</p>
+                <p className="text-xs text-muted-foreground">2-3 business days</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 p-4 bg-muted/30 rounded-lg border">
+              <Check className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-foreground">Protected</p>
+                <p className="text-xs text-muted-foreground">Safe checkout</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center">
+            <p className="text-xs text-muted-foreground">🔒 Your information is encrypted and secure</p>
+          </div>
         </div>
       </div>
     </div>
