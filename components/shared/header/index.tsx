@@ -1,6 +1,6 @@
+import { APP_NAME } from '@/lib/constants';
 import Image from 'next/image';
 import Link from 'next/link';
-import { APP_NAME } from '@/lib/constants';
 import Menu from './menu';
 // import CategoryDrawer from './category-drawer';
 // import Search from './search';
@@ -13,7 +13,7 @@ const Header = () => {
           {/* <CategoryDrawer /> */}
           <Link href='/' className='flex-start ml-4'>
             <Image
-              src='/images/logo.svg'
+              src='/images/logo.png'
               alt={`${APP_NAME} logo`}
               height={48}
               width={48}
