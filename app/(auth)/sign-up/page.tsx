@@ -1,27 +1,27 @@
-import { auth } from "@/auth"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { APP_NAME } from "@/lib/constants"
-import type { Metadata } from "next"
-import Image from "next/image"
-import Link from "next/link"
-import { redirect } from "next/navigation"
-import SignUpForm from "./sign-up-form"
+import { auth } from "@/auth";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { APP_NAME } from "@/lib/constants";
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import SignUpForm from "./sign-up-form";
 
 export const metadata: Metadata = {
   title: "Sign Up",
-}
+};
 
 const SignUpPage = async (props: {
   searchParams: Promise<{
-    callbackUrl: string
-  }>
+    callbackUrl: string;
+  }>;
 }) => {
-  const { callbackUrl } = await props.searchParams
+  const { callbackUrl } = await props.searchParams;
 
-  const session = await auth()
+  const session = await auth();
 
   if (session) {
-    return redirect(callbackUrl || "/")
+    return redirect(callbackUrl || "/");
   }
 
   return (
@@ -39,7 +39,7 @@ const SignUpPage = async (props: {
             <Link href="/" className="flex justify-center">
               <div className="p-4 rounded-2xl bg-white/80 backdrop-blur-sm shadow-lg shadow-gray-200/30 border border-gray-200/50">
                 <Image
-                  src="/images/logo.svg"
+                  src="/images/logo.png"
                   width={60}
                   height={60}
                   alt={`${APP_NAME} logo`}
@@ -59,7 +59,7 @@ const SignUpPage = async (props: {
         </Card>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SignUpPage
+export default SignUpPage;
