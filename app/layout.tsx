@@ -22,17 +22,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <meta charSet="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="icon" href="/images/logo.png" />
       <body
         className={`${inter}`}
       >
         <ThemeProvider
-        attribute="class"
-        defaultTheme="dark"
-        enableSystem
-        disableTransitionOnChange
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
         >
           {children}
-        <Toaster/>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
