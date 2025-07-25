@@ -10,6 +10,7 @@ import Rating from "../../../../components/shared/product/animated-rating";
 import ProductImages from "../../../../components/shared/product/product-images";
 import { getMyCart } from "../../../../lib/actions/cart.actions";
 import { getProductBySlug } from "../../../../lib/actions/product.action";
+import ReviewList from './review-list';
 
 const ProductDetailsPage = async (props: { params: Promise<{ slug: string; }>; }) => {
   const { slug } = await props.params;
@@ -190,7 +191,7 @@ const ProductDetailsPage = async (props: { params: Promise<{ slug: string; }>; }
       {/* Reviews Section */}
       <section className="py-16 bg-muted/20">
         <div className="container mx-auto px-4 max-w-7xl">
-          {/* <ReviewList userId={userId || ""} productId={product.id} productSlug={product.slug} /> */}
+          <ReviewList userId={userId || ""} productId={product.id} productSlug={product.slug} />
         </div>
       </section>
     </div>
