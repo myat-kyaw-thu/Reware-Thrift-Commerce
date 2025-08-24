@@ -25,7 +25,7 @@ const OrdersPage = async (props: {
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-100 mb-2">
             Orders
           </h2>
-          <div className="h-1 w-20 bg-gradient-to-r from-slate-600 to-slate-400 dark:from-slate-400 dark:to-slate-300 rounded-full"></div>
+
         </div>
 
         <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl shadow-slate-200/20 dark:shadow-slate-900/20 overflow-hidden">
