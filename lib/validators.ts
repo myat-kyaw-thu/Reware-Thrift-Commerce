@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { formatNumberWithDecimal } from './utils';
 import { PAYMENT_METHODS } from './constants';
+import { formatNumberWithDecimal } from './utils';
 
 const currency = z
   .string()
@@ -121,16 +121,57 @@ export const paymentResultSchema = z.object({
   pricePaid: z.string(),
 });
 
-// Schema for updating the user profile
-export const updateProfileSchema = z.object({
-  name: z.string().min(3, 'Name must be at leaast 3 characters'),
-  email: z.string().min(3, 'Email must be at leaast 3 characters'),
+// Schema for basic profile update (name and email only)
+export const basicProfileSchema = z.object({
+  name: z.string().min(3, 'Name must be at least 3 characters'),
+  email: z.string().email('Invalid email address'),
 });
 
-// Schema to update users
-export const updateUserSchema = updateProfileSchema.extend({
+// Schema for updating the user profile (comprehensive)
+export const updateProfileSchema = z.object({
+  name: z.string().min(3, 'Name must be at least 3 characters'),
+  email: z.string().email('Invalid email address'),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  bio: z.string().max(500, 'Bio must be less than 500 characters').optional(),
+  dateOfBirth: z.string().optional(),
+  phone: z.string().optional(),
+  gender: z.enum(['male', 'female', 'other', 'prefer-not-to-say']).optional(),
+  country: z.string().optional(),
+  state: z.string().optional(),
+  city: z.string().optional(),
+  zipCode: z.string().optional(),
+  website: z.string().url('Invalid website URL').optional().or(z.literal('')),
+  linkedIn: z.string().optional(),
+  twitter: z.string().optional(),
+  instagram: z.string().optional(),
+  facebook: z.string().optional(),
+  occupation: z.string().optional(),
+  company: z.string().optional(),
+  newsletter: z.boolean().optional(),
+  smsUpdates: z.boolean().optional(),
+  language: z.string().optional(),
+  timezone: z.string().optional(),
+  currency: z.string().optional(),
+});
+
+// Schema for user preferences
+export const userPreferencesSchema = z.object({
+  newsletter: z.boolean(),
+  smsUpdates: z.boolean(),
+  language: z.string(),
+  timezone: z.string().optional(),
+  currency: z.string(),
+});
+
+// Schema to update users (admin)
+export const updateUserSchema = z.object({
   id: z.string().min(1, 'ID is required'),
+  name: z.string().min(3, 'Name must be at least 3 characters'),
+  email: z.string().email('Invalid email address'),
   role: z.string().min(1, 'Role is required'),
+  isActive: z.boolean(),
+  isVerified: z.boolean(),
 });
 
 // Schema to insert reviews
