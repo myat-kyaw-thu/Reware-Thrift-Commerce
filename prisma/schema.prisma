@@ -1,6 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -28,7 +27,6 @@ model Product {
   Review      Review[]
 }
 
-
 model User {
   id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name          String    @default("NO_NAME")
@@ -39,13 +37,45 @@ model User {
   role          String    @default("user")
   address       Json?     @db.Json
   paymentMethod String?
-  createdAt     DateTime  @default(now()) @db.Timestamp(6)
-  updatedAt     DateTime  @updatedAt
-  account       Account[]
-  session       Session[]
-  Cart          Cart[]
-  Order         Order[]
-  Review        Review[]
+
+  firstName   String?
+  lastName    String?
+  bio         String?
+  dateOfBirth DateTime? @db.Date
+  phone       String?
+  gender      String?
+
+  country String?
+  state   String?
+  city    String?
+  zipCode String?
+
+  website    String?
+  linkedIn   String?
+  twitter    String?
+  instagram  String?
+  facebook   String?
+  occupation String?
+  company    String?
+
+  newsletter Boolean @default(true)
+  smsUpdates Boolean @default(false)
+  language   String  @default("en")
+  timezone   String?
+  currency   String  @default("USD")
+
+  profileViews Int       @default(0)
+  isVerified   Boolean   @default(false)
+  lastLoginAt  DateTime? @db.Timestamp(6)
+  isActive     Boolean   @default(true)
+
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime  @updatedAt
+  account   Account[]
+  session   Session[]
+  Cart      Cart[]
+  Order     Order[]
+  Review    Review[]
 }
 
 model Account {
