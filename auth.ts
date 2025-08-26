@@ -25,7 +25,7 @@ export const config = {
         password: { type: 'password' },
       },
       async authorize(credentials) {
-        
+
         if (
           !credentials ||
           typeof credentials.email !== 'string' ||
@@ -89,7 +89,16 @@ export const config = {
 
           await prisma.user.update({
             where: { id: user.id },
-            data: { name: token.name },
+            data: {
+              name: token.name,
+              lastLoginAt: new Date(),
+            },
+          });
+        } else {
+          // Update last login for existing users
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { lastLoginAt: new Date() },
           });
         }
 
