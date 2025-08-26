@@ -2,8 +2,8 @@
 
 import { auth } from '@/auth';
 import { prisma } from '@/db/prisma';
-import { sendPurchaseReceipt } from '@/email';
-import { CartItem, PaymentResult, ShippingAddress } from '@/types';
+// import { sendPurchaseReceipt } from '@/email';
+import { CartItem, PaymentResult } from '@/types';
 import { Prisma } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
@@ -260,21 +260,22 @@ export async function updateOrderToPaid({
 
   if (!updatedOrder) throw new Error('Order not found');
 
-  sendPurchaseReceipt({
-    order: {
-      ...updatedOrder,
-      itemsPrice: updatedOrder.itemsPrice.toString(),
-      shippingPrice: updatedOrder.shippingPrice.toString(),
-      taxPrice: updatedOrder.taxPrice.toString(),
-      totalPrice: updatedOrder.totalPrice.toString(),
-      shippingAddress: updatedOrder.shippingAddress as ShippingAddress,
-      paymentResult: updatedOrder.paymentResult as PaymentResult,
-      orderitems: updatedOrder.orderitems.map(item => ({
-        ...item,
-        price: item.price.toString(),
-      })),
-    },
-  });
+  // TODO: Implement email sending functionality
+  // sendPurchaseReceipt({
+  //   order: {
+  //     ...updatedOrder,
+  //     itemsPrice: updatedOrder.itemsPrice.toString(),
+  //     shippingPrice: updatedOrder.shippingPrice.toString(),
+  //     taxPrice: updatedOrder.taxPrice.toString(),
+  //     totalPrice: updatedOrder.totalPrice.toString(),
+  //     shippingAddress: updatedOrder.shippingAddress as ShippingAddress,
+  //     paymentResult: updatedOrder.paymentResult as PaymentResult,
+  //     orderitems: updatedOrder.orderitems.map(item => ({
+  //       ...item,
+  //       price: item.price.toString(),
+  //     })),
+  //   },
+  // });
 }
 
 // Get user's orders
