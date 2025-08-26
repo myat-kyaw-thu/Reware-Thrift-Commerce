@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
 import qs from 'query-string';
+import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -145,4 +145,124 @@ export function formUrlQuery({
       skipNull: true,
     }
   );
+}
+
+// Profile data formatting utilities
+
+// Format date for profile display (user-friendly format)
+export function formatProfileDate(date: Date | string | null | undefined): string {
+  if (!date) return 'Not provided';
+
+  try {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    return dateObj.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  } catch {
+    return 'Invalid date';
+  }
+}
+
+// Handle null/undefined profile fields gracefully
+export function formatProfileField(value: string | null | undefined, fallback: string = 'Not provided'): string {
+  if (value === null || value === undefined || value === '') {
+    return fallback;
+  }
+  return value;
+}
+
+// Format boolean preferences for display
+export function formatBooleanPreference(value: boolean | null | undefined, type: 'yesNo' | 'enabledDisabled' = 'yesNo'): string {
+  if (value === null || value === undefined) {
+    return 'Not set';
+  }
+
+  if (type === 'enabledDisabled') {
+    return value ? 'Enabled' : 'Disabled';
+  }
+
+  return value ? 'Yes' : 'No';
+}
+
+// Profile section data types
+export interface ProfileSection {
+  title: string;
+  fields: ProfileField[];
+}
+
+export interface ProfileField {
+  label: string;
+  value: string;
+  key: string;
+}
+
+// Organize profile data into sections
+export function organizeProfileData(user: any): ProfileSection[] {
+  const sections: ProfileSection[] = [
+    {
+      title: 'Personal Information',
+      fields: [
+        { label: 'Full Name', value: formatProfileField(user.name), key: 'name' },
+        { label: 'First Name', value: formatProfileField(user.firstName), key: 'firstName' },
+        { label: 'Last Name', value: formatProfileField(user.lastName), key: 'lastName' },
+        { label: 'Email', value: formatProfileField(user.email), key: 'email' },
+        { label: 'Phone', value: formatProfileField(user.phone), key: 'phone' },
+        { label: 'Date of Birth', value: formatProfileDate(user.dateOfBirth), key: 'dateOfBirth' },
+        { label: 'Gender', value: formatProfileField(user.gender), key: 'gender' },
+        { label: 'Bio', value: formatProfileField(user.bio), key: 'bio' }
+      ]
+    },
+    {
+      title: 'Location Details',
+      fields: [
+        { label: 'Country', value: formatProfileField(user.country), key: 'country' },
+        { label: 'State', value: formatProfileField(user.state), key: 'state' },
+        { label: 'City', value: formatProfileField(user.city), key: 'city' },
+        { label: 'Zip Code', value: formatProfileField(user.zipCode), key: 'zipCode' }
+      ]
+    },
+    {
+      title: 'Social Media',
+      fields: [
+        { label: 'Website', value: formatProfileField(user.website), key: 'website' },
+        { label: 'LinkedIn', value: formatProfileField(user.linkedIn), key: 'linkedIn' },
+        { label: 'Twitter', value: formatProfileField(user.twitter), key: 'twitter' },
+        { label: 'Instagram', value: formatProfileField(user.instagram), key: 'instagram' },
+        { label: 'Facebook', value: formatProfileField(user.facebook), key: 'facebook' }
+      ]
+    },
+    {
+      title: 'Professional',
+      fields: [
+        { label: 'Occupation', value: formatProfileField(user.occupation), key: 'occupation' },
+        { label: 'Company', value: formatProfileField(user.company), key: 'company' }
+      ]
+    },
+    {
+      title: 'Preferences',
+      fields: [
+        { label: 'Newsletter', value: formatBooleanPreference(user.newsletter), key: 'newsletter' },
+        { label: 'SMS Updates', value: formatBooleanPreference(user.smsUpdates), key: 'smsUpdates' },
+        { label: 'Language', value: formatProfileField(user.language), key: 'language' },
+        { label: 'Timezone', value: formatProfileField(user.timezone), key: 'timezone' },
+        { label: 'Currency', value: formatProfileField(user.currency), key: 'currency' }
+      ]
+    },
+    {
+      title: 'Account Status',
+      fields: [
+        { label: 'Role', value: formatProfileField(user.role), key: 'role' },
+        { label: 'Verified', value: formatBooleanPreference(user.isVerified, 'yesNo'), key: 'isVerified' },
+        { label: 'Active', value: formatBooleanPreference(user.isActive, 'yesNo'), key: 'isActive' },
+        { label: 'Profile Views', value: formatProfileField(user.profileViews?.toString(), '0'), key: 'profileViews' },
+        { label: 'Last Login', value: formatProfileDate(user.lastLoginAt), key: 'lastLoginAt' },
+        { label: 'Member Since', value: formatProfileDate(user.createdAt), key: 'createdAt' },
+        { label: 'Last Updated', value: formatProfileDate(user.updatedAt), key: 'updatedAt' }
+      ]
+    }
+  ];
+
+  return sections;
 }
