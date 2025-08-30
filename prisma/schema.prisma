@@ -37,49 +37,43 @@ model User {
   role          String    @default("user")
   address       Json?     @db.Json
   paymentMethod String?
-
-  firstName   String?
-  lastName    String?
-  bio         String?
-  dateOfBirth DateTime? @db.Date
-  phone       String?
-  gender      String?
-
-  country String?
-  state   String?
-  city    String?
-  zipCode String?
-
-  website    String?
-  linkedIn   String?
-  twitter    String?
-  instagram  String?
-  facebook   String?
-  occupation String?
-  company    String?
-
-  newsletter Boolean @default(true)
-  smsUpdates Boolean @default(false)
-  language   String  @default("en")
-  timezone   String?
-  currency   String  @default("USD")
-
-  profileViews Int       @default(0)
-  isVerified   Boolean   @default(false)
-  lastLoginAt  DateTime? @db.Timestamp(6)
-  isActive     Boolean   @default(true)
-
-  createdAt DateTime  @default(now()) @db.Timestamp(6)
-  updatedAt DateTime  @updatedAt
-  account   Account[]
-  session   Session[]
-  Cart      Cart[]
-  Order     Order[]
-  Review    Review[]
+  createdAt     DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime  @updatedAt
+  bio           String?
+  city          String?
+  company       String?
+  country       String?
+  currency      String    @default("USD")
+  dateOfBirth   DateTime? @db.Date
+  facebook      String?
+  firstName     String?
+  gender        String?
+  instagram     String?
+  isActive      Boolean   @default(true)
+  isVerified    Boolean   @default(false)
+  language      String    @default("en")
+  lastLoginAt   DateTime? @db.Timestamp(6)
+  lastName      String?
+  linkedIn      String?
+  newsletter    Boolean   @default(true)
+  occupation    String?
+  phone         String?
+  profileViews  Int       @default(0)
+  smsUpdates    Boolean   @default(false)
+  state         String?
+  timezone      String?
+  twitter       String?
+  website       String?
+  zipCode       String?
+  account       Account[]
+  Cart          Cart[]
+  Order         Order[]
+  Review        Review[]
+  session       Session[]
 }
 
 model Account {
-  userId            String  @db.Uuid
+  userId            String   @db.Uuid
   type              String
   provider          String
   providerAccountId String
@@ -90,11 +84,9 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-
-  createdAt DateTime @default(now()) @db.Timestamp(6)
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt         DateTime @default(now()) @db.Timestamp(6)
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([provider, providerAccountId])
 }
@@ -103,10 +95,9 @@ model Session {
   sessionToken String   @id
   userId       String   @db.Uuid
   expires      DateTime @db.Timestamp(6)
+  createdAt    DateTime @default(now()) @db.Timestamp(6)
+  updatedAt    DateTime @updatedAt
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now()) @db.Timestamp(6)
-  updatedAt DateTime @updatedAt
 }
 
 model VerificationToken {
