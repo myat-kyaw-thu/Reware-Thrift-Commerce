@@ -107,9 +107,9 @@ const OrdersPage = async (props: {
                       )}
                     </TableCell>
                     <TableCell className="px-4 sm:px-6 py-4 text-sm">
-                      <Link href={`/order/${order.id}`}>
-                        <span className="inline-flex items-center px-4 py-2 rounded-lg bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 text-sm font-medium transition-all duration-200 ease-in-out transform active:scale-95">
-                          Details
+                      <Link href={`/user/orders/${order.id}`}>
+                        <span className="inline-flex items-center px-4 py-2 rounded-lg bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 text-sm font-medium transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95 transition-transform">
+                          View Details
                         </span>
                       </Link>
                     </TableCell>
